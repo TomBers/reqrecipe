@@ -1,0 +1,4 @@
+strict digraph {  "Short question test4" "When?" "TesTitle" "NotDetention?" "BILLL" "Which naational police?" "Moreaee comments?" "Short question test4" -> "When?""When?" -> "TesTitle""TesTitle" -> "NotDetention?""NotDetention?" -> "BILLL""BILLL" -> "Which naational police?""Which naational police?" -> "Moreaee comments?""Moreaee comments?" -> ""  
+ "BILLL" -> "Which naational police?" 
+ "BILLL" -> "Moreaee comments?" 
+ "TesTitle" -> "NotDetention?" }

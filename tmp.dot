@@ -1,0 +1,9 @@
+strict digraph {
+    "a"
+    "b"
+    "c"
+    "e"
+    "a" -> "b" [weight=1]
+    "b" -> "c" [weight=1]
+    "b" -> "e" [weight=1]
+}
