@@ -12,8 +12,6 @@ strict digraph {
  "pzWcYIv4Fzhk" -> "EYy2JbQU0g8B" 
  "EYy2JbQU0g8B" -> "PQUY2GGzHhLa" 
  "PQUY2GGzHhLa" -> "S6qkTwC18V4f" 
- "S6qkTwC18V4f" -> ""  
- "EYy2JbQU0g8B" -> "PQUY2GGzHhLa" 
+ "S6qkTwC18V4f" -> "" 
  "EYy2JbQU0g8B" -> "S6qkTwC18V4f" 
- "EdazGT4AJb0X" -> "pzWcYIv4Fzhk" 
  }
