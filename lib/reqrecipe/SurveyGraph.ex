@@ -1,5 +1,7 @@
 defmodule SurveyGraph do
 
+  @nn_id "NEW_NODE"
+
   def draw_graph(g) do
     name = "newgraph"
     {:ok, file} = File.open("#{name}.dot", [:write])
@@ -60,9 +62,69 @@ defmodule SurveyGraph do
     t = 'strict digraph {'
     e = '}'
 
-    nodes = build_fields() |> node_string
-    links = Enum.concat(get_links(), branches()) |> IO.inspect |> Enum.uniq |> IO.inspect |> link_string
-    "#{t} #{nodes} #{links} \n #{e}"
+    nodes = build_fields()
+    links = Enum.concat(get_links(), branches()) |> Enum.uniq
+
+    {nodes, links} = add_new_node_before("S6qkTwC18V4f", nodes, links)
+
+#    {nodes, links} = remove_node("pzWcYIv4Fzhk", nodes, links)
+
+    node_txt = nodes |> node_string
+    link_txt = links |> link_string
+    "#{t} #{node_txt} #{link_txt} \n #{e}"
+  end
+
+  def remove_node(id, nodes, links) do
+    nns = List.delete(nodes, id)
+
+    parent = Enum.find(links, fn(x) -> x.to == id end)
+    child = Enum.find(links, fn(x) -> x.from == id end)
+
+    lid = Enum.find_index(links, fn(x) -> x.to == id end)
+
+    nl = %{from: parent.from, to: child.to}
+    links = List.replace_at(links, lid, nl) |> List.delete(parent) |> List.delete(child)
+
+
+    {nns, links}
+  end
+
+  def add_new_node_before(id, nodes, links) do
+    indx = Enum.find_index(nodes, fn(x) -> x == id end)
+    nns = List.insert_at(nodes, indx, @nn_id)
+
+    links = add_to_links(id, links)
+#    IO.inspect(get_no_parents("B9vOSIbvqEsh", links))
+#    IO.inspect(get_no_children("B9vOSIbvqEsh", links))
+    {nns, links}
+  end
+
+  def add_to_links(id, links) do
+
+    parents = Enum.filter(links, fn(x) -> x.to == id end)
+
+
+    lid = Enum.find_index(links, fn(x) -> x.to == id end)
+    link = Enum.find(links, fn(x) -> x.to == id end)
+    nl = [%{from: link.from, to: @nn_id}, %{from: @nn_id, to: link.to}]
+
+    links = List.replace_at(links, lid, nl) |> List.flatten
+  end
+
+  def insert_link() do
+
+  end
+
+
+
+  def get_no_parents(id, g) do
+    parents = Enum.filter(g, fn(x) -> x.to == id end)
+    length(parents)
+  end
+
+  def get_no_children(id, g) do
+    children = Enum.filter(g, fn(x) -> x.from == id end)
+    length(children)
   end
 
   def node_string(nodes) do
