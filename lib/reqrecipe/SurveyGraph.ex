@@ -67,27 +67,47 @@ defmodule SurveyGraph do
 
     {nodes, links} = add_new_node_before("S6qkTwC18V4f", nodes, links)
 
+#    {nodes, links} = add_new_node_before("PQUY2GGzHhLa", nodes, links)
+
 #    {nodes, links} = remove_node("pzWcYIv4Fzhk", nodes, links)
+#    {nodes, links} = remove_node("S6qkTwC18V4f", nodes, links)
+#    {nodes, links} = remove_node("PQUY2GGzHhLa", nodes, links)
 
     node_txt = nodes |> node_string
     link_txt = links |> link_string
     "#{t} #{node_txt} #{link_txt} \n #{e}"
   end
 
+
   def remove_node(id, nodes, links) do
     nns = List.delete(nodes, id)
+    parents = Enum.filter(links, fn(x) -> x.to == id end)
+    children = Enum.filter(links, fn(x) -> x.from == id end)
 
-    parent = Enum.find(links, fn(x) -> x.to == id end)
-    child = Enum.find(links, fn(x) -> x.from == id end)
-
-    lid = Enum.find_index(links, fn(x) -> x.to == id end)
-
-    nl = %{from: parent.from, to: child.to}
-    links = List.replace_at(links, lid, nl) |> List.delete(parent) |> List.delete(child)
-
-
+    links = Enum.reduce(parents,links, fn(node, acc) -> remove_link(node, acc, children) end) |> Enum.filter(fn(%{from: from, to: to}) -> from != id and to != id end)
     {nns, links}
   end
+
+  def remove_link(node, links, children) do
+    lid = Enum.find_index(links, fn(x) -> x == node end)
+    nls = Enum.map(children, fn(child) -> %{from: node.from, to: child.to} end)
+    links = List.replace_at(links, lid, nls) |> List.flatten
+  end
+
+#  def remove_node(id, nodes, links) do
+#    nns = List.delete(nodes, id)
+#
+#    parent = Enum.find(links, fn(x) -> x.to == id end)
+#    child = Enum.find(links, fn(x) -> x.from == id end)
+#
+#    lid = Enum.find_index(links, fn(x) -> x.to == id end)
+#
+#    nl = %{from: parent.from, to: child.to}
+#    links = List.replace_at(links, lid, nl) |> List.delete(parent) |> List.delete(child)
+#
+#
+#    {nns, links}
+#  end
 
   def add_new_node_before(id, nodes, links) do
     indx = Enum.find_index(nodes, fn(x) -> x == id end)
@@ -100,19 +120,14 @@ defmodule SurveyGraph do
   end
 
   def add_to_links(id, links) do
-
     parents = Enum.filter(links, fn(x) -> x.to == id end)
-
-
-    lid = Enum.find_index(links, fn(x) -> x.to == id end)
-    link = Enum.find(links, fn(x) -> x.to == id end)
-    nl = [%{from: link.from, to: @nn_id}, %{from: @nn_id, to: link.to}]
-
-    links = List.replace_at(links, lid, nl) |> List.flatten
+    Enum.reduce(parents,links, fn(node, acc) -> insert_link(node, acc) end)
   end
 
-  def insert_link() do
-
+  def insert_link(link, links) do
+    lid = Enum.find_index(links, fn(x) -> x == link end)
+    nl = [%{from: link.from, to: @nn_id}, %{from: @nn_id, to: link.to}]
+    links = List.replace_at(links, lid, nl) |> List.flatten
   end
 
 
