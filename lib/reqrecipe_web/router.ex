@@ -20,6 +20,7 @@ defmodule ReqrecipeWeb.Router do
     get "/", PageController, :index
     live "/recipe", RecipeLive
     live "/count", CountLive
+    live "/assoc", AssocLive
   end
 
   # Other scopes may use custom stacks.
